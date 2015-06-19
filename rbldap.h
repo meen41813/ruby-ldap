@@ -148,6 +148,13 @@ VALUE rb_ldap_mod_vals (VALUE);
   } \
 }
 
+#define Check_LDAP_Search_Result(err) { \
+  if( (err) != LDAP_SUCCESS && (err) != LDAP_SIZELIMIT_EXCEEDED && \
+      (err) != LDAP_NO_SUCH_OBJECT) { \
+    rb_raise(rb_eLDAP_ResultError, "%s", ldap_err2string(err)); \
+  } \
+}
+
 #define Check_LDAP_OPT_Result(err) { \
   if( (err) != LDAP_OPT_SUCCESS ){ \
     rb_raise(rb_eLDAP_ResultError, "%s", ldap_err2string(err)); \

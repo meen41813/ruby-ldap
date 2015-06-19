@@ -934,7 +934,13 @@ rb_ldap_conn_search_i (int argc, VALUE argv[], VALUE self,
     {
       rb_raise (rb_eRuntimeError, "no result returned by search");
     }
-  Check_LDAP_Result ((*ldapdata)->err);
+
+	if ((*ldapdata)->err == LDAP_NO_SUCH_OBJECT
+      && ldap_count_entries(cldap, *cmsg) < 1)
+		{
+      rb_raise (rb_eRuntimeError, "no result returned by search");
+		}
+  Check_LDAP_Search_Result ((*ldapdata)->err);
 
 #ifdef HAVE_LDAP_SORT_ENTRIES
   if (rb_ldap_sort_obj != Qnil)
@@ -1014,7 +1020,7 @@ rb_ldap_parse_result (LDAP * cldap, LDAPMessage * cmsg)
   rc = ldap_parse_result (cldap, cmsg, &err, NULL, NULL,
 			  &referrals, &serverctrls, 0);
   Check_LDAP_Result (rc);
-  Check_LDAP_Result (err);
+  Check_LDAP_Search_Result (err);
 
   if (referrals)
     {
@@ -1267,7 +1273,13 @@ rb_ldap_conn_search_ext_i (int argc, VALUE argv[], VALUE self,
 					    sctrls, cctrls,
 					    &tv, climit, cmsg);
     }
-  Check_LDAP_Result ((*ldapdata)->err);
+
+	if ((*ldapdata)->err == LDAP_NO_SUCH_OBJECT
+      && ldap_count_entries(cldap, *cmsg) < 1)
+		{
+      rb_raise (rb_eRuntimeError, "no result returned by search");
+		}
+  Check_LDAP_Search_Result ((*ldapdata)->err);
 
 #ifdef HAVE_LDAP_SORT_ENTRIES
   if (rb_ldap_sort_obj != Qnil)
@@ -1325,7 +1337,8 @@ rb_ldap_conn_search_ext_s (int argc, VALUE argv[], VALUE self)
   cldap = ldapdata->ldap;
 
   if (ldapdata->err == LDAP_SUCCESS
-      || ldapdata->err == LDAP_SIZELIMIT_EXCEEDED)
+      || ldapdata->err == LDAP_SIZELIMIT_EXCEEDED
+      || ldapdata->err == LDAP_NO_SUCH_OBJECT)
     {
       void *pass_data[] = { (void *) cldap, (void *) cmsg };
 
@@ -1389,7 +1402,8 @@ rb_ldap_conn_search_ext2_s (int argc, VALUE argv[], VALUE self)
 
   ary = rb_ary_new ();
   if (ldapdata->err == LDAP_SUCCESS
-      || ldapdata->err == LDAP_SIZELIMIT_EXCEEDED)
+      || ldapdata->err == LDAP_SIZELIMIT_EXCEEDED
+      || ldapdata->err == LDAP_NO_SUCH_OBJECT)
     {
       void *pass_data[] = { (void *) cldap, (void *) cmsg, (void *) ary };
 
