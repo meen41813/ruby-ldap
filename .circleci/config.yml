@@ -16,8 +16,8 @@ jobs:
       - checkout
       
       - run : sudo apt-get update
-      - run : sudo aot-get install  libldap2-dev 
-      - run : sudo aot-get install  libsasl2-dev 
+      - run : sudo apt-get install  libldap2-dev 
+      - run : sudo apt-get install  libsasl2-dev 
       - run: ruby extconf.rb
       - run: make
       - run: sudo make install
