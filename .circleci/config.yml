@@ -16,10 +16,11 @@ jobs:
       - checkout
       
       - run : sudo apt-get update
-      - run : sudo aot-get install -y libldap2-dev build-essential
+      - run : sudo aot-get install  libldap2-dev 
+      - run : sudo aot-get install  libsasl2-dev 
       - run: ruby extconf.rb
       - run: make
-      - run: make install
+      - run: sudo make install
       - run: gem build ruby-ldap.gemspec
 
 
