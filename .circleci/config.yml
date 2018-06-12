@@ -22,7 +22,7 @@ jobs:
       - run: make
       - run: sudo make install
       - run: gem build ruby-ldap.gemspec
-
+      - run : gem install ruby-ldap-0.9.17.gem
 
       # run tests!
       #- run:
